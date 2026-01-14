@@ -1,4 +1,8 @@
 package com.example.civicpulse.data.remote.dto
 
-class RepoSearchResponseDto {
-}
+import com.squareup.moshi.Json
+
+data class RepoSearchResponseDto(
+    @Json(name = "items")
+    val items: List<RepoDto>
+)

@@ -1,4 +1,8 @@
 package com.example.civicpulse.data.repository
 
-class CivicRepository {
+
+import com.example.civicpulse.data.remote.dto.RepoDto
+
+interface CivicRepository {
+    suspend fun getRepositories(): Result<List<RepoDto>>
 }
