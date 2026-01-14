@@ -2,7 +2,8 @@ package com.example.civicpulse.data.repository
 
 
 import com.example.civicpulse.data.remote.dto.RepoDto
+import com.example.civicpulse.domain.model.Repository
 
 interface CivicRepository {
-    suspend fun getRepositories(): Result<List<RepoDto>>
+    suspend fun getRepositories(): Result<List<Repository>>
 }

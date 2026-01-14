@@ -1,19 +1,23 @@
 package com.example.civicpulse.data.repository
 
-
+import com.example.civicpulse.data.mapper.toDomain
 import com.example.civicpulse.data.remote.RetrofitClient
-import com.example.civicpulse.data.remote.dto.RepoDto
+import com.example.civicpulse.domain.model.Repository
 
 class CivicRepositoryImpl : CivicRepository {
 
-    override suspend fun getRepositories(): Result<List<RepoDto>> {
+    override suspend fun getRepositories(): Result<List<Repository>> {
         return try {
             val response = RetrofitClient.apiService.searchRepositories(
                 query = "android",
                 page = 1,
                 perPage = 20
             )
-            Result.success(response.items)
+
+            // DTO → Domain mapping happens HERE
+            val domainRepos = response.items.map { it.toDomain() }
+
+            Result.success(domainRepos)
         } catch (e: Exception) {
             Result.failure(e)
         }

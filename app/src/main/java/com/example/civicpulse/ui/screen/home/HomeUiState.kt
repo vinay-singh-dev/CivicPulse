@@ -1,9 +1,9 @@
 package com.example.civicpulse.ui.screen.home
 
-import com.example.civicpulse.data.remote.dto.RepoDto
+import com.example.civicpulse.domain.model.Repository
 
 sealed class HomeUiState {
     object Loading : HomeUiState()
-    data class Success(val repos: List<RepoDto>) : HomeUiState()
+    data class Success(val repos: List<Repository>) : HomeUiState()
     data class Error(val message: String) : HomeUiState()
 }
