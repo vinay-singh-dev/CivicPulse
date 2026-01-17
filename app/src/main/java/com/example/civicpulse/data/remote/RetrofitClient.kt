@@ -1,5 +1,6 @@
 package com.example.civicpulse.data.remote
 
+import com.example.civicpulse.data.remote.interceptor.AuthInterceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -14,8 +15,10 @@ object RetrofitClient {
     }
 
     private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(AuthInterceptor())
         .addInterceptor(loggingInterceptor)
         .build()
+
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
