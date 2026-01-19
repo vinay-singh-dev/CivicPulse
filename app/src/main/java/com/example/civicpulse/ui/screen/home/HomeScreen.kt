@@ -6,21 +6,22 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import kotlinx.coroutines.flow.StateFlow
 import androidx.compose.runtime.getValue
+import com.example.civicpulse.ui.screen.home.HomeViewModel
 import androidx.compose.runtime.snapshotFlow
+
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = viewModel()
+    viewModel: HomeViewModel
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsState<HomeUiState>()
     val listState = rememberLazyListState()
 
-    // 🔥 SIDE EFFECT — OUTSIDE LazyColumn
     LaunchedEffect(listState) {
         snapshotFlow {
             listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
@@ -33,38 +34,29 @@ fun HomeScreen(
     }
 
     when (state) {
-        is HomeUiState.Loading -> {
-            CircularProgressIndicator()
-        }
+        is HomeUiState.Loading -> CircularProgressIndicator()
 
         is HomeUiState.Success -> {
             val successState = state as HomeUiState.Success
 
             LazyColumn(state = listState) {
-                items(
-                    items = successState.repos,
-                    key = { it.id }
-                ) { repo ->
+                items(successState.repos, key = { it.id }) { repo ->
                     Column {
-                        Text(text = repo.name)
-                        repo.description?.let {
-                            Text(text = it)
-                        }
-                        Text(text = "⭐ ${repo.stars}")
+                        Text(repo.name)
+                        repo.description?.let { Text(it) }
+                        Text("⭐ ${repo.stars}")
                     }
                 }
 
-                // ✅ FOOTER SPINNER
                 if (successState.isLoadingMore) {
-                    item {
-                        CircularProgressIndicator()
-                    }
+                    item { CircularProgressIndicator() }
                 }
             }
         }
 
         is HomeUiState.Error -> {
-            Text(text = (state as HomeUiState.Error).message)
+            Text((state as HomeUiState.Error).message)
         }
     }
 }
+

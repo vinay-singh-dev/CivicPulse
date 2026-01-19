@@ -2,14 +2,14 @@ package com.example.civicpulse.ui.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.civicpulse.data.repository.CivicRepositoryImpl
+import com.example.civicpulse.data.repository.CivicRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
-
-    private val repository = CivicRepositoryImpl()
+class HomeViewModel(
+    private val repository: CivicRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState
