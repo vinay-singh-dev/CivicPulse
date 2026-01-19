@@ -72,4 +72,16 @@ class HomeViewModel(
             isRequestInProgress = false
         }
     }
+
+    fun refresh() {
+        viewModelScope.launch {
+            currentPage = 1
+            isRequestInProgress = false
+
+            _uiState.value = HomeUiState.Loading
+            repository.clearCache()
+
+            loadInitial()
+        }
+    }
 }

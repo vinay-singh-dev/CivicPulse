@@ -4,7 +4,6 @@ import com.example.civicpulse.data.local.dao.RepoDao
 import com.example.civicpulse.data.mapper.toDomain
 import com.example.civicpulse.data.mapper.toEntity
 import com.example.civicpulse.data.remote.ApiService
-import com.example.civicpulse.data.remote.RetrofitClient
 import com.example.civicpulse.domain.model.Repository
 
 class CivicRepositoryImpl(
@@ -37,6 +36,8 @@ class CivicRepositoryImpl(
             }
         }
     }
+
+    override suspend fun clearCache() {
+        dao.clearRepos()
+    }
 }
-
-
