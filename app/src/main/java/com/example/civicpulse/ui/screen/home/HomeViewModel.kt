@@ -14,18 +14,62 @@ class HomeViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState
 
+    private var currentPage = 1
+    private var isRequestInProgress = false
+
     init {
-        fetchRepos()
+        loadInitial()
     }
 
-    private fun fetchRepos() {
+    private fun loadInitial() {
         viewModelScope.launch {
             _uiState.value = HomeUiState.Loading
-            val result = repository.getRepositories()
+            isRequestInProgress = true
+
+            val result = repository.getRepositories(page = currentPage)
+
             _uiState.value = result.fold(
-                onSuccess = { HomeUiState.Success(it) },
-                onFailure = { HomeUiState.Error(it.message ?: "Unknown error") }
+                onSuccess = {
+                    HomeUiState.Success(
+                        repos = it,
+                        isLoadingMore = false
+                    )
+                },
+                onFailure = {
+                    HomeUiState.Error(it.message ?: "Unknown error")
+                }
             )
+
+            isRequestInProgress = false
+        }
+    }
+
+    fun loadNextPage() {
+        val currentState = _uiState.value
+        if (currentState !is HomeUiState.Success) return
+        if (isRequestInProgress) return
+
+        viewModelScope.launch {
+            isRequestInProgress = true
+            _uiState.value = currentState.copy(isLoadingMore = true)
+
+            currentPage++
+
+            val result = repository.getRepositories(page = currentPage)
+
+            _uiState.value = result.fold(
+                onSuccess = { newRepos ->
+                    HomeUiState.Success(
+                        repos = currentState.repos + newRepos,
+                        isLoadingMore = false
+                    )
+                },
+                onFailure = {
+                    currentState.copy(isLoadingMore = false)
+                }
+            )
+
+            isRequestInProgress = false
         }
     }
 }

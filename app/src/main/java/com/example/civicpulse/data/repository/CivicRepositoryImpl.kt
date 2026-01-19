@@ -1,16 +1,18 @@
 package com.example.civicpulse.data.repository
 
+import android.util.Log
 import com.example.civicpulse.data.mapper.toDomain
 import com.example.civicpulse.data.remote.RetrofitClient
 import com.example.civicpulse.domain.model.Repository
 
 class CivicRepositoryImpl : CivicRepository {
 
-    override suspend fun getRepositories(): Result<List<Repository>> {
+    override suspend fun getRepositories(page: Int): Result<List<Repository>> {
         return try {
+            Log.d("Repo", "Fetching page = $page")
             val response = RetrofitClient.apiService.searchRepositories(
                 query = "android",
-                page = 1,
+                page = page,
                 perPage = 20
             )
 
@@ -23,3 +25,4 @@ class CivicRepositoryImpl : CivicRepository {
         }
     }
 }
+
